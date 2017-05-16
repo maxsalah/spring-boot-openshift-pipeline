@@ -99,9 +99,6 @@ objects:
               sh "oc start-build ${appName}-docker --from-file=target/app.jar --follow -n ${project}"
             }
             stage("Deploy") {
-              timeout(time:5, unit:'MINUTES') {
-                input message: "Deploy new Version?", ok: "Deploy"
-              }
               openshiftDeploy deploymentConfig: appName, namespace: project
             }
           }
