@@ -52,7 +52,7 @@ objects:
         version: "1"
       from:
         kind: DockerImage
-        name: maven:3.5-jdk-8-alpine
+        name: tjololo/maven-base:latest
       name: "1"
     - annotations:
         supports: java,standalone
