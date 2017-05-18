@@ -78,10 +78,9 @@ objects:
     source:
       git:
         uri: "${GIT_SOURCE_URL}"
-        contextDir: ${GIT_JENKINS_CONTEXT_DIR}
     strategy:
       jenkinsPipelineStrategy:
-        jenkinsfilePath: Jenkinsfile
+        jenkinsfilePath: ${GIT_JENKINS_CONTEXT_DIR}/Jenkinsfile
     triggers:
     - github:
         secret: "${GITHUB_WEBHOOK_SECRET}"
