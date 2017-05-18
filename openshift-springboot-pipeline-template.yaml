@@ -13,6 +13,10 @@ parameters:
   displayName: Source URL
   required: true
   value: https://github.com/tjololo/springboot-sample-app.git
+- name: GIT_JENKINS_CONTEXT_DIR
+  description: The context dir for the jenkins file in the git repo
+  displayName: Jenkinsfile contextdir
+  value: jenkins
 - name: GIT_SOURCE_REF
   description: The source Ref for the application
   displayName: Source Ref
@@ -71,38 +75,12 @@ objects:
       name: ${APP_NAME}
     name: ${APP_NAME}
   spec:
+    source:
+      git:
+        uri: "${GIT_SOURCE_URL}"
     strategy:
       jenkinsPipelineStrategy:
-        jenkinsfile: |-
-          def appName="${APP_NAME}"
-          def project=""
-
-          node {
-            stage("Initialize") {
-              project = env.PROJECT_NAME
-            }
-          }
-
-          node("maven") {
-            stage("Checkout") {
-              git url: "${GIT_SOURCE_URL}", branch: "${GIT_SOURCE_REF}"
-            }
-            stage("Build JAR") {
-              sh "mvn clean package -Popenshift"
-              stash name:"jar", includes:"target/app.jar"
-            }
-          }
-
-          node {
-            stage("Build Image") {
-              unstash name:"jar"
-              sh "oc start-build ${appName}-docker --from-file=target/app.jar --follow -n ${project}"
-            }
-            stage("Deploy") {
-              openshiftDeploy deploymentConfig: appName, namespace: project
-            }
-          }
-      type: JenkinsPipeline
+        jenkinsfilePath: ${GIT_JENKINS_CONTEXT_DIR}/Jenkinsfile
     triggers:
     - github:
         secret: "${GITHUB_WEBHOOK_SECRET}"
