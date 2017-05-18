@@ -16,7 +16,7 @@ parameters:
 - name: GIT_JENKINS_CONTEXT_DIR
   description: The context dir for the jenkins file in the git repo
   displayName: Jenkinsfile contextdir
-  value: /jenkins
+  value: jenkins
 - name: GIT_SOURCE_REF
   description: The source Ref for the application
   displayName: Source Ref
