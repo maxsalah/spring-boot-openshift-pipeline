@@ -75,12 +75,12 @@ objects:
       name: ${APP_NAME}
     name: ${APP_NAME}
   spec:
+    source:
+      git:
+        uri: "${GIT_SOURCE_URL}"
+        contextDir: "${GIT_JENKINS_CONTEXT_DIR}"
     strategy:
       jenkinsPipelineStrategy:
-      source:
-        git:
-          uri: "${GIT_SOURCE_URL}"
-          contextDir: "${GIT_JENKINS_CONTEXT_DIR}"
       type: JenkinsPipeline
     triggers:
     - github:
