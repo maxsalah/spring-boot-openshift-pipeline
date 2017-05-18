@@ -78,7 +78,7 @@ objects:
     source:
       git:
         uri: "${GIT_SOURCE_URL}"
-        contextDir: "${GIT_JENKINS_CONTEXT_DIR}"
+        contextDir: ${GIT_JENKINS_CONTEXT_DIR}
     strategy:
       jenkinsPipelineStrategy:
         jenkinsfilePath: Jenkinsfile
