@@ -78,9 +78,13 @@ objects:
     source:
       git:
         uri: "${GIT_SOURCE_URL}"
+        ref: "${GIT_SOURCE_REF}"
     strategy:
       jenkinsPipelineStrategy:
         jenkinsfilePath: ${GIT_JENKINS_CONTEXT_DIR}/Jenkinsfile
+        env:
+          - name: TEST
+            value: Hello
     triggers:
     - github:
         secret: "${GITHUB_WEBHOOK_SECRET}"
