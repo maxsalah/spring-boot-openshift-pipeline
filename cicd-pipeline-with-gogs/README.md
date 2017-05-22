@@ -34,7 +34,11 @@ oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n production
 oc create -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/springboot-deployment-template.yaml -n cicd
 ```
 
-### Deploy gogs and create the pipeline
+### Deploy gogs
 ```bash
 oc process -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/cicd-gogs-without-service-template.yaml | oc create -f - -n cicd
+```
+### Create pipeline build
+```bash
+oc process -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/springboot-pipeline-template.yaml | oc create -f - -n cicd
 ```

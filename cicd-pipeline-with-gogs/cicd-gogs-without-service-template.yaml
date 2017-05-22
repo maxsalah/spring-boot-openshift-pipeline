@@ -340,10 +340,8 @@ objects:
       # Use the oc client to get the url for the gogs and jenkins route and service
       GOGSSVC=$(oc get svc gogs -o template --template='{{.spec.clusterIP}}')
       GOGSROUTE=$(oc get route gogs -o template --template='{{.spec.host}}')
-      JENKINSSVC=$(oc get svc jenkins -o template --template='{{.spec.clusterIP}}')
       # Use the oc client to get the postgres and jenkins variables into the current shell
       eval $(oc env dc/postgresql-gogs --list | grep -v \#)
-      eval $(oc env dc/jenkins --list | grep -v \#)
       # postgres has a readiness probe, so checking if there is at least one
       # endpoint means postgres is alive and ready, so we can then attempt to install gogs
       # we're willing to wait 60 seconds for it, otherwise something is wrong.
@@ -416,31 +414,6 @@ objects:
 
       RETURN=$(curl -o /dev/null -sL -w "%{http_code}" -H "Content-Type: application/json" \
       -u gogs:$GOGS_PASSWORD -X POST http://$GOGSSVC:3000/api/v1/repos/migrate -d @/tmp/data.json)
-
-      if [ $RETURN != "201" ]
-      then
-        exit 255
-      fi
-
-
-      sleep 5
-
-      # add webhook to Gogs to trigger pipeline on push
-      cat <<EOF > /tmp/data.json
-      {
-        "type": "gogs",
-        "config": {
-          "url": "http://developer:developer$JENKINS_PASSWORD@$JENKINSSVC/job/cicd-springboot-sample-app/build?delay=0sec",
-          "content_type": "json"
-        },
-        "events": [
-          "push"
-        ],
-        "active": true
-      }
-      EOF
-      RETURN=$(curl -o /dev/null -sL -w "%{http_code}" -H "Content-Type: application/json" \
-      -u gogs:$GOGS_PASSWORD -X POST http://$GOGSSVC:3000/api/v1/repos/gogs/springboot-sample-app/hooks -d @/tmp/data.json)
 
       if [ $RETURN != "201" ]
       then
@@ -944,89 +917,3 @@ objects:
       SHOW_FOOTER_VERSION = true
       ; Show time of template execution in the footer
       SHOW_FOOTER_TEMPLATE_LOAD_TIME = true
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    labels:
-      app: ${APP_NAME}
-    name: ${APP_NAME}
-  spec: {}
-  status:
-    dockerImageRepository: ""
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    name: maven
-  spec:
-    tags:
-    - annotations:
-        supports: java,maven,spring-boot
-        tags: builder,springboot,java
-        version: "1"
-      from:
-        kind: ImageStreamTag
-        name: custom-builder:latest
-      name: "1"
-    - annotations:
-        supports: java,standalone
-        tags: builder,springboot,java
-      from:
-        kind: ImageStreamTag
-        name: "1"
-      name: latest
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    annotations:
-      pipeline.alpha.openshift.io/uses: '[{"name": "${NAME}", "namespace": "", "kind": "DeploymentConfig"}]'
-    creationTimestamp: null
-    labels:
-      name: ${APP_NAME}
-    name: ${APP_NAME}
-  spec:
-    source:
-      git:
-        uri: "${GIT_SOURCE_URL}"
-        ref: "${GIT_SOURCE_REF}"
-    strategy:
-      jenkinsPipelineStrategy:
-        jenkinsfilePath: ${GIT_JENKINS_CONTEXT_DIR}/Jenkinsfile
-        env:
-          - name: TEST
-            value: Hello
-    triggers:
-    - github:
-        secret: "${GITHUB_WEBHOOK_SECRET}"
-      type: GitHub
-    - generic:
-        secret: "${GENERIC_WEBHOOK_SECRET}"
-      type: Generic
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    labels:
-      app: ${APP_NAME}-docker
-    name: ${APP_NAME}-docker
-  spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: ${APP_NAME}:latest
-    postCommit: {}
-    resources: {}
-    runPolicy: Serial
-    source:
-      dockerfile: |-
-        FROM maven
-        COPY app.jar /app.jar
-        CMD java -jar /app.jar
-      binary:
-        asFile: app.jar
-      type: Docker
-    strategy:
-      dockerStrategy:
-        from:
-          kind: ImageStreamTag
-          name: java-base:latest
-      type: Docker
-    triggers: {}

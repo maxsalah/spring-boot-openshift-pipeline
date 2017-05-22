@@ -1,0 +1,86 @@
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: ${APP_NAME}
+    name: ${APP_NAME}
+  spec: {}
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: maven
+  spec:
+    tags:
+    - annotations:
+        supports: java,maven,spring-boot
+        tags: builder,springboot,java
+        version: "1"
+      from:
+        kind: ImageStreamTag
+        name: custom-builder:latest
+      name: "1"
+    - annotations:
+        supports: java,standalone
+        tags: builder,springboot,java
+      from:
+        kind: ImageStreamTag
+        name: "1"
+      name: latest
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      pipeline.alpha.openshift.io/uses: '[{"name": "${NAME}", "namespace": "", "kind": "DeploymentConfig"}]'
+    creationTimestamp: null
+    labels:
+      name: ${APP_NAME}
+    name: ${APP_NAME}
+  spec:
+    source:
+      git:
+        uri: "${GIT_SOURCE_URL}"
+        ref: "${GIT_SOURCE_REF}"
+    strategy:
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: ${GIT_JENKINS_CONTEXT_DIR}/Jenkinsfile
+        env:
+          - name: TEST
+            value: Hello
+    triggers:
+    - github:
+        secret: "${GITHUB_WEBHOOK_SECRET}"
+      type: GitHub
+    - generic:
+        secret: "${GENERIC_WEBHOOK_SECRET}"
+      type: Generic
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: ${APP_NAME}-docker
+    name: ${APP_NAME}-docker
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${APP_NAME}:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      dockerfile: |-
+        FROM maven
+        COPY app.jar /app.jar
+        CMD java -jar /app.jar
+      binary:
+        asFile: app.jar
+      type: Docker
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: java-base:latest
+      type: Docker
+    triggers: {}
