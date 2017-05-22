@@ -28,17 +28,13 @@ oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n test
 oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n qa
 oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n production
 ```
-### Deploy gogs
+
+### Import template for service
 ```bash
-oc process -f cicd-pipeline-gogs/cicd-gogs-template | oc create -f - -n cicd
+oc create -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/springboot-deployment-template.yaml -n cicd
 ```
-### Deploy jenkins
+
+### Deploy gogs and create the pipeline
 ```bash
-oc policy add-role-to-user edit system:serviceaccount:myproject:jenkins -n cicd
+oc process -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/cicd-gogs-without-service-template.yaml | oc create -f - -n cicd
 ```
-### Create sample pipeline
-Creates sample pipeline running [this](https://github.com/tjololo/springboot-sample-app) application
-```bash
-oc process -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/openshift-springboot-pipeline-template.yaml -n cicd | oc create -f - -n cicd
-```
-To get a overview over what parameters are available open the template *maven-pipeline* template in the OpenShift web console
