@@ -1,3 +1,40 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: maven-pipeline
+parameters:
+- name: APP_NAME
+  description: The name assigned to all of the application objects defined in this template.
+  displayName: Application Name
+  required: true
+  value: springboot-sample-app
+- name: GIT_SOURCE_URL
+  description: The source URL for the application
+  displayName: Source URL
+  required: true
+  value: https://gogs:3000/gogs/springboot-sample-app.git
+- name: GIT_JENKINS_CONTEXT_DIR
+  description: The context dir for the jenkins file in the git repo
+  displayName: Jenkinsfile contextdir
+  value: jenkins
+- name: GIT_SOURCE_REF
+  description: The source Ref for the application
+  displayName: Source Ref
+  required: true
+  value: cicd-sample
+- description: A secret string used to configure the GitHub webhook.
+  displayName: GitHub Webhook Secret
+  from: '[a-zA-Z0-9]{40}'
+  generate: expression
+  name: GITHUB_WEBHOOK_SECRET
+  required: true
+- description: A secret string used to configure the Generic webhook.
+  displayName: Generic Webhook Secret
+  from: '[a-zA-Z0-9]{40}'
+  generate: expression
+  name: GENERIC_WEBHOOK_SECRET
+  required: true
+objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
