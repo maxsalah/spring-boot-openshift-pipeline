@@ -8,6 +8,8 @@ git clone https://github.com/tjololo/spring-boot-openshift-pipeline.git
 cd spring-boot-openshift-pipeline/cicd-pipeline-with-gogs
 ./setup-demo.sh
 ```
+Wait until the builds of the baseimages are done and install-gogs pod has finished successfully
+
 ### Create sample pipeline
 ```bash
 oc process -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/springboot-pipeline-template.yaml | oc create -f - -n cicd
