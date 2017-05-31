@@ -72,3 +72,9 @@ One repository is created automaticly. The sample pipeline is fixed to the cicd-
 The jenkins file used by the pipeline is located under the folder jenkins in the cicd-sample branch.
 
 Read/edit the jenkinsfile and start playing with the pipeline.
+
+### Where should i start?
+* Add a webhook
+* Try bumping the "bugfix-version" (last digit in the pom.xml version)
+* Try bumping the "minor-version" (middle digit in the pom.xml version)
+* Try bumping the "major-version" (first digit in the pom.xml version)
