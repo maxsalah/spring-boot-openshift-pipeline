@@ -1,7 +1,18 @@
 # spring-boot-openshift-pipeline
 Openshift pipeline template for spring boot applications
-
-## Setup
+## Setup with script
+### Checkout and run script
+```bash
+cd /folder/to/checkout/srouce/to
+git clone https://github.com/tjololo/spring-boot-openshift-pipeline.git
+cd spring-boot-openshift-pipeline/cicd-pipeline-with-gogs
+./setup-demo.sh
+```
+### Create sample pipeline
+```bash
+oc process -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/springboot-pipeline-template.yaml | oc create -f - -n cicd
+```
+## Manual Setup
 ### Start cluster
 ```bash
 oc cluster up
@@ -17,7 +28,7 @@ oc new-project production
 ```
 ### Import base images
 ```bash
-oc create -f https://raw.githubusercontent.com/tjololo/custom-builder/master/custom-builder-base-images-template.json -n cicd 
+oc create -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/base-images-template.json -n cicd 
 ```
 
 ### Grant edit to Jenkins user

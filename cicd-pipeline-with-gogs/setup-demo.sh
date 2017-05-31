@@ -14,7 +14,7 @@ oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n test
 oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n qa
 oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n production
 #Import base images used
-oc create -f https://raw.githubusercontent.com/tjololo/custom-builder/master/custom-builder-base-images-template.json -n cicd
+oc create -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/base-images-template.json -n cicd
 #Create template for fatjar deployment projects used in dev/test/qa
 oc create -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/springboot-deployment-template.yaml -n cicd
 #Deploy gogs service
