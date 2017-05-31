@@ -74,6 +74,8 @@ The jenkins file used by the pipeline is located under the folder jenkins in the
 Read/edit the jenkinsfile and start playing with the pipeline.
 
 ### Where should i start?
+* Start the pipeline
+* Why did the deploy to qa fail?
 * Add a webhook
 * Try bumping the "bugfix-version" (last digit in the pom.xml version)
 * Try bumping the "minor-version" (middle digit in the pom.xml version)
