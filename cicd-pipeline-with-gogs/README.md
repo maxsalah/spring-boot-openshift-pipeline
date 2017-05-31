@@ -55,3 +55,20 @@ oc process -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pi
 ```bash
 oc process -f https://raw.githubusercontent.com/tjololo/spring-boot-openshift-pipeline/master/cicd-pipeline-with-gogs/springboot-pipeline-template.yaml | oc create -f - -n cicd
 ```
+## Usage
+After the setup is complete you should have a gogs, jenkins and a sample pipeline in the project cicd.
+
+### Openshift
+username: developer
+password: developer
+
+### Gogs
+username: gogs
+
+password: password
+
+One repository is created automaticly. The sample pipeline is fixed to the cicd-sample branch of this repository.
+
+The jenkins file used by the pipeline is located under the folder jenkins in the cicd-sample branch.
+
+Read/edit the jenkinsfile and start playing with the pipeline.
